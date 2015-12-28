@@ -1,6 +1,6 @@
 {
   "name": "tiny-coerce",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Tiny coercion library for Client or Server",
   "main": "lib/tiny-coerce.js",
   "scripts": {
@@ -11,8 +11,8 @@
     "url": "https://github.com/avoidwork/tiny-coerce.git"
   },
   "keywords": [
-    "uuid",
-    "uuid4"
+    "coerce",
+    "coercion"
   ],
   "author": "Jason Mulligan <jason.mulligan@avoidwork.com>",
   "license": "BSD-3-Clause",
