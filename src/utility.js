@@ -1,34 +1,62 @@
-const jsonWrap = /^[\[\{]/;
+	let coerce, walk;
 
-function coerce (value) {
-	let result, tmp;
-
-	if (value === null || value === undefined) {
-		result = undefined;
-	} else if (value === "true") {
-		result = true;
-	} else if (value === "false") {
-		result = false;
-	} else if (value === "null") {
-		result = null;
-	} else if (value === "undefined") {
-		result = undefined;
-	} else if (value === "") {
-		result = value;
-	} else if (!isNaN(tmp = Number(value))) {
-		result = tmp;
-	} else if (jsonWrap.test(value)) {
-		try {
-			result = JSON.parse(value);
-		} catch (e) {
-			console.warn(e);
-			result = value;
+	walk = arg => {
+		if (Array.isArray(arg)) {
+			arg = arg.forEach((i, idx) => {
+				arg[idx] = coerce(i, true);
+			});
+		} else if (arg instanceof Object) {
+			Object.keys(arg).forEach(key => {
+				arg[key] = coerce(arg[key], true);
+			});
 		}
-	} else {
-		result = value;
-	}
+	};
 
-	return result;
-}
+	coerce = (arg, deep = false) => {
+		let result;
 
-coerce.version = "{{VERSION}}";
+		if (typeof arg !== "string") {
+			result = arg;
+
+			if (deep) {
+				walk(result);
+			}
+		} else {
+			const value = arg.trim();
+			let tmp;
+
+			if (value.length === 0) {
+				result = value;
+			} else if (regex.true.test(value)) {
+				result = true;
+			} else if (regex.false.test(value)) {
+				result = false;
+			} else if (regex.null.test(value)) {
+				result = null;
+			} else if (value === "undefined") {
+				result = undefined;
+			} else if (!isNaN(tmp = Number(value))) {
+				result = tmp;
+			} else if (regex.json.test(value)) {
+				let valid;
+
+				try {
+					result = JSON.parse(value);
+					valid = true;
+				} catch (e) {
+					result = value;
+					valid = false;
+				}
+
+				if (valid && deep) {
+					walk(result);
+				}
+			} else {
+				result = value;
+			}
+		}
+
+		return result;
+	};
+
+	coerce.version = "{{VERSION}}";
