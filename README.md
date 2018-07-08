@@ -1,4 +1,4 @@
-# tiny-coerce
+# Tiny Coerce
 [![build status](https://secure.travis-ci.org/avoidwork/tiny-coerce.svg)](http://travis-ci.org/avoidwork/tiny-coerce)
 
 String to primitive coercion for Client or Server. It's great for DOM data attributes, localStorage,
