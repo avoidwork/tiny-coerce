@@ -1,12 +1,14 @@
 # tiny-coerce
 [![build status](https://secure.travis-ci.org/avoidwork/tiny-coerce.svg)](http://travis-ci.org/avoidwork/tiny-coerce)
 
-Tiny library for String to primitive coercion for Client or Server. It's great for DOM data attributes, localStorage,
+String to primitive coercion for Client or Server. It's great for DOM data attributes, localStorage,
 and other cases where your need to store a String.
 
 ## API
 ##### coerce (arg[, deep = false])
 Returns a coercion of `arg`. Deep coercion is optional with the second parameter.
+
+First parameter is trimmed before coercion!
 
 ## Example
 ```javascript

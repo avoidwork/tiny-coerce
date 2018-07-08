@@ -37,12 +37,14 @@ exports.deep = {
 
 exports.invalid = {
 	setUp: function (done) {
+		this.empty = "\"\n\n\n\n";
 		this.string = "\"1234";
 		this.object = "{z";
 		done();
 	},
 	test: function (test) {
-		test.expect(2);
+		test.expect(3);
+		test.equal(coerce(this.empty), "\"", "Should be `\"`");
 		test.equal(coerce(this.string), "\"1234", "Should be `\"1234`");
 		test.equal(coerce(this.object), "{z", "Should be `{z`");
 		test.done();
