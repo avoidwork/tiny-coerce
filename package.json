@@ -1,14 +1,27 @@
 {
   "name": "tiny-coerce",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "description": "Tiny coercion library for Client or Server",
-  "main": "lib/tiny-coerce.js",
+  "source": "src/coerce.js",
+  "main": "dist/tiny-coerce.cjs",
+  "module": "dist/tiny-coerce.esm.js",
+  "type": "module",
+  "sourceType": "module",
+  "engineStrict": true,
+  "engines": {
+    "node": ">= 16.0.0"
+  },
   "scripts": {
-    "test": "grunt test"
+    "build": "npm run lint && rm -rf dist/* && npm run rollup && npm run mocha",
+    "changelog": "auto-changelog -p",
+    "rollup": "rollup --config",
+    "lint": "eslint *.js src/*.js test/*.js",
+    "mocha": "mocha test/*.js",
+    "test": "npm run lint && npm run mocha"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/avoidwork/tiny-coerce.git"
+    "url": "git://github.com/avoidwork/tiny-coerce.git"
   },
   "keywords": [
     "coerce",
@@ -19,22 +32,13 @@
   "bugs": {
     "url": "https://github.com/avoidwork/tiny-coerce/issues"
   },
-  "engineStrict": true,
-  "engines": {
-    "node": ">=6.5.0"
-  },
   "homepage": "http://avoidwork.github.io/tiny-coerce",
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-minify": "^0.4.3",
-    "grunt": "^1.0.3",
-    "grunt-cli": "^1.2.0",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-nodeunit": "^2.0.0",
-    "grunt-contrib-uglify": "^3.3.0",
-    "grunt-contrib-watch": "^1.1.0",
-    "grunt-eslint": "^21.0.0",
-    "grunt-replace": "^1.0.1"
+    "auto-changelog": "^2.4.0",
+    "eslint": "^8.23.0",
+    "mocha": "^10.0.0",
+    "rollup": "^2.79.0",
+    "rollup-plugin-terser": "^7.0.2"
   },
   "dependencies": {}
 }
