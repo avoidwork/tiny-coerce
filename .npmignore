@@ -1,11 +1,8 @@
-/.idea/
-/node_modules/
-/lib/tiny-coerce.min.js
-/lib/tiny-coerce.min.js.map
-/src/
-/test/
-.eslintrc
+.idea
+node_modules
+src
+test
 .git
 .gitignore
-.travis.yml
-Gruntfile.js
+.eslintrc
+rollup.config.js

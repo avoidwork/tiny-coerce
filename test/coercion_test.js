@@ -1,52 +1,43 @@
-const path = require("path"),
-	coerce = require(path.join(__dirname, "..", "lib", "tiny-coerce.js"));
+import {default as assert} from "node:assert";
+import {coerce} from "../dist/tiny-coerce.esm.js";
 
-exports.flat = {
-	setUp: function (done) {
+describe("Testing flat structure", function () {
+	beforeEach(function () {
 		this.number = "1234";
 		this.boolean = "true";
 		this.json = "{\"test\": true}";
 		this.jsonString = "\"Hello World!\"";
 		this.undefined = "undefined";
 		this.null = "null";
-		done();
-	},
-	test: function (test) {
-		test.expect(6);
-		test.equal(coerce(this.number), 1234, "Should be `1234`");
-		test.equal(coerce(this.boolean), true, "Should be `true`");
-		test.equal(coerce(this.json) instanceof Object, true, "Should be an Object");
-		test.equal(coerce(this.jsonString), "Hello World!", "Should be `Hello World!`");
-		test.equal(coerce(this.undefined), undefined, "Should be `undefined`");
-		test.equal(coerce(this.null), null, "Should be `null`");
-		test.done();
-	}
-};
+	});
 
-exports.deep = {
-	setUp: function (done) {
-		done();
-	},
-	test: function (test) {
-		test.expect(2);
-		test.equal(coerce({a: {b: "50"}}, true).a.b, 50, "Should be `50`");
-		test.equal(coerce("{\"a\": {\"b\": \"50\"}}", true).a.b, 50, "Should be `50`");
-		test.done();
-	}
-};
+	it("It should coerce primitives", function () {
+		assert.equal(coerce(this.number), 1234, "Should be `1234`");
+		assert.equal(coerce(this.boolean), true, "Should be `true`");
+		assert.equal(coerce(this.json) instanceof Object, true, "Should be an Object");
+		assert.equal(coerce(this.jsonString), "Hello World!", "Should be `Hello World!`");
+		assert.equal(coerce(this.undefined), undefined, "Should be `undefined`");
+		assert.equal(coerce(this.null), null, "Should be `null`");
+	});
+});
 
-exports.invalid = {
-	setUp: function (done) {
+describe("Testing deep structure coercion", function () {
+	it("It should coerce", function () {
+		assert.equal(coerce({a: {b: "50"}}, true).a.b, 50, "Should be `50`");
+		assert.equal(coerce("{\"a\": {\"b\": \"50\"}}", true).a.b, 50, "Should be `50`");
+	});
+});
+
+describe("Testing invalid primitives", function () {
+	beforeEach(function () {
 		this.empty = "\"\n\n\n\n";
 		this.string = "\"1234";
 		this.object = "{z";
-		done();
-	},
-	test: function (test) {
-		test.expect(3);
-		test.equal(coerce(this.empty), "\"", "Should be `\"`");
-		test.equal(coerce(this.string), "\"1234", "Should be `\"1234`");
-		test.equal(coerce(this.object), "{z", "Should be `{z`");
-		test.done();
-	}
-};
+	});
+
+	it("It should coerce", function () {
+		assert.equal(coerce(this.empty), "\"", "Should be `\"`");
+		assert.equal(coerce(this.string), "\"1234", "Should be `\"1234`");
+		assert.equal(coerce(this.object), "{z", "Should be `{z`");
+	});
+});
