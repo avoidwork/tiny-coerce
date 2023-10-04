@@ -29,9 +29,9 @@ describe("Testing flat structure", function () {
 	});
 
 	it("It should coerce invalid primitives", function () {
-		assert.strictEqual(coerce(this.quoteNewLines), "\"", "Should be `\"`");
-		assert.strictEqual(coerce(this.quoteNumbers), "\"1234", "Should be `\"1234`");
-		assert.strictEqual(coerce(this.jsonStringInvalid), this.jsonStringInvalid, `Should be '${this.jsonStringInvalid}`);
+		assert.strictEqual(coerce(this.quoteNewLines), this.quoteNewLines.trim(), `Should be '${this.quoteNewLines.trim()}`);
+		assert.strictEqual(coerce(this.quoteNumbers), this.quoteNumbers.trim(), `Should be '${this.quoteNumbers.trim()}`);
+		assert.strictEqual(coerce(this.jsonStringInvalid), this.jsonStringInvalid.trim(), `Should be '${this.jsonStringInvalid.trim()}`);
 	});
 });
 
