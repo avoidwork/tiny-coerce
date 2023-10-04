@@ -1,5 +1,6 @@
 .idea
 .husky
+.github
 .nyc_output
 node_modules
 src
