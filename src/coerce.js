@@ -1,10 +1,11 @@
 import {regex} from "./regex.js";
+import {STRING, UNDEFINED} from "./constants.js";
 
 function walk (arg) {
 	const array = Array.isArray(arg),
 		x = array ? arg : Object.keys(arg),
 		fn = (i, idx) => {
-			arg[array ? i : idx] = coerce(array ? i : arg[i], true); // eslint-disable-line no-use-before-define
+			arg[array ? idx : i] = coerce(array ? i : arg[i], true); // eslint-disable-line no-use-before-define
 		};
 
 	x.forEach(fn);
@@ -13,7 +14,7 @@ function walk (arg) {
 export function coerce (arg, deep = false) {
 	let result;
 
-	if (typeof arg !== "string") {
+	if (typeof arg !== STRING) {
 		result = arg;
 
 		if (deep) {
@@ -31,7 +32,7 @@ export function coerce (arg, deep = false) {
 			result = false;
 		} else if (regex.null.test(value)) {
 			result = null;
-		} else if (value === "undefined") {
+		} else if (value === UNDEFINED) {
 			result = undefined;
 		} else if (!isNaN(tmp = Number(value))) {
 			result = tmp;

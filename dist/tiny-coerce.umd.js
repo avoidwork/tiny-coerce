@@ -1,20 +1,21 @@
 /**
  * tiny-coerce
  *
- * @copyright 2022 Jason Mulligan <jason.mulligan@avoidwork.com>
+ * @copyright 2023 Jason Mulligan <jason.mulligan@avoidwork.com>
  * @license BSD-3-Clause
- * @version 2.0.0
+ * @version 3.0.0
  */
-const regex = {
+(function(g,f){typeof exports==='object'&&typeof module!=='undefined'?f(exports):typeof define==='function'&&define.amd?define(['exports'],f):(g=typeof globalThis!=='undefined'?globalThis:g||self,f(g.lru={}));})(this,(function(exports){'use strict';const regex = {
 	false: /^(F|f)alse$/,
 	null: /^(N|n)ull$/,
 	json: /^["\[{].*[}\]"]$/,
 	true: /^(T|t)rue$/
-};function walk (arg) {
+};const STRING = "string";
+const UNDEFINED = "undefined";function walk (arg) {
 	const array = Array.isArray(arg),
 		x = array ? arg : Object.keys(arg),
 		fn = (i, idx) => {
-			arg[array ? i : idx] = coerce(array ? i : arg[i], true); // eslint-disable-line no-use-before-define
+			arg[array ? idx : i] = coerce(array ? i : arg[i], true); // eslint-disable-line no-use-before-define
 		};
 
 	x.forEach(fn);
@@ -23,7 +24,7 @@ const regex = {
 function coerce (arg, deep = false) {
 	let result;
 
-	if (typeof arg !== "string") {
+	if (typeof arg !== STRING) {
 		result = arg;
 
 		if (deep) {
@@ -41,7 +42,7 @@ function coerce (arg, deep = false) {
 			result = false;
 		} else if (regex.null.test(value)) {
 			result = null;
-		} else if (value === "undefined") {
+		} else if (value === UNDEFINED) {
 			result = undefined;
 		} else if (!isNaN(tmp = Number(value))) {
 			result = tmp;
@@ -65,4 +66,4 @@ function coerce (arg, deep = false) {
 	}
 
 	return result;
-}export{coerce};
+}exports.coerce=coerce;}));

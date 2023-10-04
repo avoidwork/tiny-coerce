@@ -1,6 +1,7 @@
-import pkg from "./package.json";
-
-const {terser} = require("rollup-plugin-terser");
+import terser from "@rollup/plugin-terser";
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+const pkg = require("./package.json");
 const year = new Date().getFullYear();
 const bannerLong = `/**
  * ${pkg.name}
@@ -14,7 +15,7 @@ const bannerShort = `/*!
  @version ${pkg.version}
 */`;
 const defaultOutBase = {compact: true, banner: bannerLong, name: pkg.name};
-const cjOutBase = {...defaultOutBase, format: "cjs", exports: "named"};
+const cjOutBase = {...defaultOutBase, compact: false, format: "cjs", exports: "named"};
 const esmOutBase = {...defaultOutBase, format: "esm"};
 const umdOutBase = {...defaultOutBase, format: "umd"};
 const minOutBase = {banner: bannerShort, name: pkg.name, plugins: [terser()], sourcemap: true};
@@ -30,23 +31,23 @@ export default [
 			},
 			{
 				...esmOutBase,
-				file: `dist/${pkg.name}.esm.js`
+				file: `dist/${pkg.name}.js`
 			},
 			{
 				...esmOutBase,
 				...minOutBase,
-				file: `dist/${pkg.name}.esm.min.js`
+				file: `dist/${pkg.name}.min.js`
 			},
 			{
 				...umdOutBase,
-				file: `dist/${pkg.name}.js`,
-				name: "tinyCoerce"
+				file: `dist/${pkg.name}.umd.js`,
+				name: "lru"
 			},
 			{
 				...umdOutBase,
 				...minOutBase,
-				file: `dist/${pkg.name}.min.js`,
-				name: "tinyCoerce"
+				file: `dist/${pkg.name}.umd.min.js`,
+				name: "lru"
 			}
 		]
 	}
