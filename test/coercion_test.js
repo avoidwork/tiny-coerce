@@ -39,6 +39,7 @@ describe("Testing deep structure coercion", function () {
 	beforeEach(function () {
 		this.object = {a: {b: "50"}};
 	});
+
 	it("It should coerce", function () {
 		assert.strictEqual(coerce(JSON.stringify(this.object), true).a.b, 50, "Should be `50`");
 		assert.strictEqual(coerce(this.object, true).a.b, 50, "Should be `50`");
