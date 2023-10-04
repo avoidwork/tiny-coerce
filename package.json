@@ -1,23 +1,34 @@
 {
   "name": "tiny-coerce",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Tiny coercion library for Client or Server",
-  "source": "src/coerce.js",
-  "main": "dist/tiny-coerce.cjs",
-  "module": "dist/tiny-coerce.esm.js",
   "type": "module",
-  "sourceType": "module",
-  "engineStrict": true,
-  "engines": {
-    "node": ">= 16.0.0"
+  "types": "types/coerce.d.ts",
+  "source": "src/coerce.js",
+  "main": "dist/tiny-coerce",
+  "exports": {
+    "types": "./types/coerce.d.ts",
+    "import": "./dist/tiny-coerce.js",
+    "require": "./dist/tiny-coerce.cjs"
   },
+  "files": [
+    "dist",
+    "types"
+  ],
+  "engines": {
+    "node": ">=12"
+  },
+  "engineStrict": true,
   "scripts": {
-    "build": "npm run lint && rm -rf dist/* && npm run rollup && npm run mocha",
+    "build": "npm run lint && rm -rf dist && npm run rollup",
     "changelog": "auto-changelog -p",
     "rollup": "rollup --config",
+    "fix": "eslint --fix *.js src/*.js test/*.js",
     "lint": "eslint *.js src/*.js test/*.js",
-    "mocha": "mocha test/*.js",
-    "test": "npm run lint && npm run mocha"
+    "mocha": "nyc mocha test/*.js",
+    "types": "npx -p typescript tsc src/httptest.js --declaration --allowJs --emitDeclarationOnly --outDir types",
+    "test": "npm run lint && npm run mocha",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -34,11 +45,14 @@
   },
   "homepage": "http://avoidwork.github.io/tiny-coerce",
   "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.3",
     "auto-changelog": "^2.4.0",
-    "eslint": "^8.23.0",
-    "mocha": "^10.0.0",
-    "rollup": "^2.79.0",
-    "rollup-plugin-terser": "^7.0.2"
+    "eslint": "^8.49.0",
+    "husky": "^8.0.3",
+    "mocha": "^10.2.0",
+    "nyc": "^15.1.0",
+    "rollup": "^3.29.2",
+    "typescript": "^5.2.2"
   },
   "dependencies": {}
 }
