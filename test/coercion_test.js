@@ -12,6 +12,8 @@ describe("Testing flat structure", function () {
 		this.undefined = "undefined";
 		this.null = "null";
 		this.empty = "";
+		this.quoteNewLines = "\"\n\n\n\n";
+		this.quoteNumbers = "\"1234";
 	});
 
 	it("It should coerce primitives", function () {
@@ -25,6 +27,12 @@ describe("Testing flat structure", function () {
 		assert.strictEqual(coerce(this.null), null, "Should be `null`");
 		assert.strictEqual(typeof coerce(this.empty), "string", "Should be `string`");
 	});
+
+	it("It should coerce invalid primitives", function () {
+		assert.strictEqual(coerce(this.quoteNewLines), "\"", "Should be `\"`");
+		assert.strictEqual(coerce(this.quoteNumbers), "\"1234", "Should be `\"1234`");
+		assert.strictEqual(coerce(this.jsonStringInvalid), this.jsonStringInvalid, `Should be '${this.jsonStringInvalid}`);
+	});
 });
 
 describe("Testing deep structure coercion", function () {
@@ -34,16 +42,3 @@ describe("Testing deep structure coercion", function () {
 	});
 });
 
-describe("Testing invalid primitives", function () {
-	beforeEach(function () {
-		this.empty = "\"\n\n\n\n";
-		this.string = "\"1234";
-		this.object = "{z";
-	});
-
-	it("It should coerce", function () {
-		assert.strictEqual(coerce(this.empty), "\"", "Should be `\"`");
-		assert.strictEqual(coerce(this.string), "\"1234", "Should be `\"1234`");
-		assert.strictEqual(coerce(this.object), "{z", "Should be `{z`");
-	});
-});
