@@ -1,11 +1,11 @@
 {
   "name": "tiny-coerce",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Tiny coercion library for Client or Server",
   "type": "module",
   "types": "types/coerce.d.ts",
   "source": "src/coerce.js",
-  "main": "dist/tiny-coerce",
+  "main": "dist/tiny-coerce.cjs",
   "exports": {
     "types": "./types/coerce.d.ts",
     "import": "./dist/tiny-coerce.js",
