@@ -3,7 +3,7 @@
  *
  * @copyright 2023 Jason Mulligan <jason.mulligan@avoidwork.com>
  * @license BSD-3-Clause
- * @version 3.0.1
+ * @version 3.0.2
  */
 const regex = {
 	false: /^(F|f)alse$/,

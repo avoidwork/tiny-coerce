@@ -1,6 +1,6 @@
 {
   "name": "tiny-coerce",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Tiny coercion library for Client or Server",
   "type": "module",
   "types": "types/coerce.d.ts",
@@ -16,7 +16,7 @@
     "types"
   ],
   "engines": {
-    "node": ">=12"
+    "node": ">=6"
   },
   "engineStrict": true,
   "scripts": {
