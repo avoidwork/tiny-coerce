@@ -23,12 +23,12 @@
     "build": "npm run lint && rm -rf dist && npm run rollup",
     "changelog": "auto-changelog -p",
     "rollup": "rollup --config",
-    "fix": "eslint --fix *.js src/*.js test/*.js",
-    "lint": "eslint *.js src/*.js test/*.js",
+    "fix": "oxlint --fix *.js src tests && oxfmt *.js src tests/unit --write",
+    "lint": "oxlint *.js src tests && oxfmt *.js src tests/unit --check",
     "mocha": "nyc mocha test/*.js",
     "types": "npx -p typescript tsc src/coerce.js --declaration --allowJs --emitDeclarationOnly --outDir types && rm types/constants.d.ts && rm types/regex.d.ts",
     "test": "npm run lint && npm run mocha",
-    "prepare": "husky install"
+    "prepare": "husky init"
   },
   "repository": {
     "type": "git",
