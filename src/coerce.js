@@ -1,7 +1,11 @@
-import {regex} from "./regex.js";
-import {STRING, UNDEFINED} from "./constants.js";
+import { REGEX, STRING, UNDEFINED } from "./constants.js";
 
-function walk (arg) {
+/**
+ * Walks through an array or object and coerces each value
+ * @private
+ * @param {Array|Object} arg - The array or object to walk
+ */
+function walk(arg) {
 	const array = Array.isArray(arg),
 		x = array ? arg : Object.keys(arg),
 		fn = (i, idx) => {
@@ -11,7 +15,13 @@ function walk (arg) {
 	x.forEach(fn);
 }
 
-export function coerce (arg, deep = false) {
+/**
+ * Coerces a string value to its appropriate type
+ * @param {*} arg - The value to coerce
+ * @param {boolean} [deep=false] - Whether to recursively coerce nested values
+ * @returns {*} The coerced value
+ */
+export function coerce(arg, deep = false) {
 	let result;
 
 	if (typeof arg !== STRING) {
@@ -26,17 +36,17 @@ export function coerce (arg, deep = false) {
 
 		if (value.length === 0) {
 			result = value;
-		} else if (regex.true.test(value)) {
+		} else if (REGEX.true.test(value)) {
 			result = true;
-		} else if (regex.false.test(value)) {
+		} else if (REGEX.false.test(value)) {
 			result = false;
-		} else if (regex.null.test(value)) {
+		} else if (REGEX.null.test(value)) {
 			result = null;
 		} else if (value === UNDEFINED) {
 			result = undefined;
-		} else if (!isNaN(tmp = Number(value))) {
+		} else if (!isNaN((tmp = Number(value)))) {
 			result = tmp;
-		} else if (regex.json.test(value)) {
+		} else if (REGEX.json.test(value)) {
 			let valid;
 
 			try {

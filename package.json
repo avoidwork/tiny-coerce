@@ -26,7 +26,6 @@
     "fix": "oxlint --fix *.js src tests && oxfmt *.js src tests/unit --write",
     "lint": "oxlint *.js src tests && oxfmt *.js src tests/unit --check",
     "mocha": "nyc mocha test/*.js",
-    "types": "npx -p typescript tsc src/coerce.js --declaration --allowJs --emitDeclarationOnly --outDir types && rm types/constants.d.ts && rm types/regex.d.ts",
     "test": "npm run lint && npm run mocha",
     "prepare": "husky init"
   },
