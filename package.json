@@ -1,6 +1,6 @@
 {
   "name": "tiny-coerce",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "Convert strings to JavaScript types (boolean, null, number, object, array)",
   "type": "module",
   "types": "types/coerce.d.ts",

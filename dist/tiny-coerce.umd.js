@@ -3,7 +3,7 @@
  *
  * @copyright 2026 Jason Mulligan <jason.mulligan@avoidwork.com>
  * @license BSD-3-Clause
- * @version 3.0.2
+ * @version 3.1.0
  */
 (function(g,f){typeof exports==='object'&&typeof module!=='undefined'?f(exports):typeof define==='function'&&define.amd?define(['exports'],f):(g=typeof globalThis!=='undefined'?globalThis:g||self,f(g.lru={}));})(this,(function(exports){'use strict';const STRING = "string";
 const MAX_DEPTH = 100;
