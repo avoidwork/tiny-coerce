@@ -10,59 +10,93 @@
 const STRING = "string";
 const UNDEFINED = "undefined";
 
-const REGEX = {
+const regex = {
+	true: /^(T|t)rue$/,
 	false: /^(F|f)alse$/,
 	null: /^(N|n)ull$/,
-	true: /^(T|t)rue$/,
 };
 
 /**
  * Walks through an array or object and coerces each value
  * @private
  * @param {Array|Object} arg - The array or object to walk
+ * @param {Object} options - Coercion options
+ * @param {number} [depth=0] - Current recursion depth
+ * @returns {Array|Object} New structure with coerced values
  */
-function walk(arg) {
-	const array = Array.isArray(arg),
-		x = array ? arg : Object.keys(arg),
-		fn = (i, idx) => {
-			arg[array ? idx : i] = coerce(array ? i : arg[i], true); // eslint-disable-line no-use-before-define
-		};
+function walk(arg, options, depth = 0) {
+	const { maxDepth = 100 } = options;
+
+	if (depth > maxDepth) {
+		throw new Error(`Maximum recursion depth of ${maxDepth} exceeded`);
+	}
+
+	const array = Array.isArray(arg);
+	const x = array ? arg : Object.keys(arg);
+	const result = array ? [] : {};
+
+	const fn = (i, idx) => {
+		const key = array ? idx : i;
+		result[key] = coerce(array ? i : arg[i], true, options, depth + 1);
+	};
 
 	x.forEach(fn);
+	return result;
 }
 
 /**
  * Coerces a string value to its appropriate type
  * @param {*} arg - The value to coerce
  * @param {boolean} [deep=false] - Whether to recursively coerce nested values
+ * @param {Object} [options={}] - Coercion options
+ * @param {number} [options.maxDepth=100] - Maximum recursion depth
+ * @param {number} [options.maxStringSize=10000] - Maximum string size in bytes
+ * @param {boolean} [options.coerceBoolean=true] - Whether to coerce booleans
+ * @param {boolean} [options.coerceNull=true] - Whether to coerce null
+ * @param {boolean} [options.coerceUndefined=true] - Whether to coerce undefined
+ * @param {boolean} [options.coerceNumber=true] - Whether to coerce numbers
+ * @param {boolean} [options.coerceObject=true] - Whether to coerce objects/arrays via JSON
  * @returns {*} The coerced value
  */
-function coerce(arg, deep = false) {
+function coerce(arg, deep = false, options = {}, depth = 0) {
+	const {
+		maxStringSize = 10000,
+		coerceBoolean = true,
+		coerceNull = true,
+		coerceUndefined = true,
+		coerceNumber = true,
+		coerceObject = true,
+	} = options;
+
 	let result;
 
 	if (typeof arg !== STRING) {
 		result = arg;
 
 		if (deep) {
-			walk(result);
+			result = walk(result, options, depth);
 		}
 	} else {
+		if (arg.length > maxStringSize) {
+			throw new Error(`String exceeds maximum size of ${maxStringSize} bytes`);
+		}
+
 		const value = arg.trim();
 		let tmp;
 
 		if (value.length === 0) {
 			result = value;
-		} else if (REGEX.true.test(value)) {
+		} else if (coerceBoolean && regex.true.test(value)) {
 			result = true;
-		} else if (REGEX.false.test(value)) {
+		} else if (coerceBoolean && regex.false.test(value)) {
 			result = false;
-		} else if (REGEX.null.test(value)) {
+		} else if (coerceNull && regex.null.test(value)) {
 			result = null;
-		} else if (value === UNDEFINED) {
+		} else if (coerceUndefined && value === UNDEFINED) {
 			result = undefined;
-		} else if (!isNaN((tmp = Number(value)))) {
+		} else if (coerceNumber && !isNaN((tmp = Number(value)))) {
 			result = tmp;
-		} else {
+		} else if (coerceObject) {
 			let valid;
 
 			try {
@@ -74,8 +108,10 @@ function coerce(arg, deep = false) {
 			}
 
 			if (valid && deep) {
-				walk(result);
+				result = walk(result, options, depth);
 			}
+		} else {
+			result = value;
 		}
 	}
 

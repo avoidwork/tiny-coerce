@@ -1,48 +1,52 @@
 import {default as assert} from "node:assert";
+import {test, describe, beforeEach} from "node:test";
 import {coerce} from "../dist/tiny-coerce.cjs";
 
-describe("Testing flat structure", function () {
-	beforeEach(function () {
-		this.number = "1234";
-		this.boolean = "true";
-		this.booleanFalse = "false";
-		this.json = "{\"test\": true}";
-		this.jsonString = "\"Hello World!\"";
-		this.jsonStringInvalid = "{\"msg\":\"Hello World!\"";
-		this.undefined = "undefined";
-		this.null = "null";
-		this.empty = "";
-		this.quoteNewLines = "\"\n\n\n\n";
-		this.quoteNumbers = "\"1234";
+describe("Testing flat structure", () => {
+	let number, boolean, booleanFalse, json, jsonString, jsonStringInvalid, undef, nullVal, empty, quoteNewLines, quoteNumbers;
+
+	beforeEach(() => {
+		number = "1234";
+		boolean = "true";
+		booleanFalse = "false";
+		json = '{"test": true}';
+		jsonString = '"Hello World!"';
+		jsonStringInvalid = '{"msg":"Hello World!"';
+		undef = "undefined";
+		nullVal = "null";
+		empty = "";
+		quoteNewLines = '"\n\n\n\n';
+		quoteNumbers = '"1234';
 	});
 
-	it("It should coerce primitives", function () {
-		assert.strictEqual(coerce(this.number), 1234, "Should be `1234`");
-		assert.strictEqual(coerce(this.boolean), true, "Should be `true`");
-		assert.strictEqual(coerce(this.booleanFalse), false, "Should be `false`");
-		assert.strictEqual(coerce(this.json) instanceof Object, true, "Should be an Object");
-		assert.strictEqual(coerce(this.jsonString), "Hello World!", "Should be `Hello World!`");
-		assert.strictEqual(coerce(this.jsonStringInvalid), this.jsonStringInvalid, `Should be '${this.jsonStringInvalid}`);
-		assert.strictEqual(coerce(this.undefined), undefined, "Should be `undefined`");
-		assert.strictEqual(coerce(this.null), null, "Should be `null`");
-		assert.strictEqual(typeof coerce(this.empty), "string", "Should be `string`");
+	test("It should coerce primitives", () => {
+		assert.strictEqual(coerce(number), 1234, "Should be `1234`");
+		assert.strictEqual(coerce(boolean), true, "Should be `true`");
+		assert.strictEqual(coerce(booleanFalse), false, "Should be `false`");
+		assert.strictEqual(coerce(json) instanceof Object, true, "Should be an Object");
+		assert.strictEqual(coerce(jsonString), "Hello World!", "Should be `Hello World!`");
+		assert.strictEqual(coerce(jsonStringInvalid), jsonStringInvalid, `Should be '${jsonStringInvalid}`);
+		assert.strictEqual(coerce(undef), undefined, "Should be `undefined`");
+		assert.strictEqual(coerce(nullVal), null, "Should be `null`");
+		assert.strictEqual(typeof coerce(empty), "string", "Should be `string`");
 	});
 
-	it("It should coerce invalid primitives", function () {
-		assert.strictEqual(coerce(this.quoteNewLines), this.quoteNewLines.trim(), `Should be '${this.quoteNewLines.trim()}`);
-		assert.strictEqual(coerce(this.quoteNumbers), this.quoteNumbers.trim(), `Should be '${this.quoteNumbers.trim()}`);
-		assert.strictEqual(coerce(this.jsonStringInvalid), this.jsonStringInvalid.trim(), `Should be '${this.jsonStringInvalid.trim()}`);
-	});
-});
-
-describe("Testing deep structure coercion", function () {
-	beforeEach(function () {
-		this.object = {a: {b: "50"}};
-	});
-
-	it("It should coerce", function () {
-		assert.strictEqual(coerce(JSON.stringify(this.object), true).a.b, 50, "Should be `50`");
-		assert.strictEqual(coerce(this.object, true).a.b, 50, "Should be `50`");
+	test("It should coerce invalid primitives", () => {
+		assert.strictEqual(coerce(quoteNewLines), quoteNewLines.trim(), `Should be '${quoteNewLines.trim()}`);
+		assert.strictEqual(coerce(quoteNumbers), quoteNumbers.trim(), `Should be '${quoteNumbers.trim()}`);
+		assert.strictEqual(coerce(jsonStringInvalid), jsonStringInvalid.trim(), `Should be '${jsonStringInvalid.trim()}`);
 	});
 });
 
+describe("Testing deep structure coercion", () => {
+	let object;
+
+	beforeEach(() => {
+		object = {a: {b: "50"}};
+	});
+
+	test("It should coerce", () => {
+		assert.strictEqual(coerce(JSON.stringify(object), true).a.b, 50, "Should be `50`");
+		assert.strictEqual(coerce(object, true).a.b, 50, "Should be `50`");
+	});
+});
