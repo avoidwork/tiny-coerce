@@ -86,7 +86,7 @@ function coerce(arg, options = {}) {
 
 	const value = arg.trim();
 
-	if (value.length > maxStringSize) {
+	if (new TextEncoder().encode(value).length > maxStringSize) {
 		throw new Error(`String exceeds maximum size of ${maxStringSize} bytes`);
 	}
 
