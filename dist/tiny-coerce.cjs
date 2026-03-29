@@ -12,7 +12,6 @@ const UNDEFINED = "undefined";
 
 const REGEX = {
 	false: /^(F|f)alse$/,
-	json: /^["[{].*[}\]"]$/,
 	null: /^(N|n)ull$/,
 	true: /^(T|t)rue$/,
 };
@@ -63,13 +62,13 @@ function coerce(arg, deep = false) {
 			result = undefined;
 		} else if (!isNaN((tmp = Number(value)))) {
 			result = tmp;
-		} else if (REGEX.json.test(value)) {
+		} else {
 			let valid;
 
 			try {
 				result = JSON.parse(value);
 				valid = true;
-			} catch (e) {
+			} catch {
 				result = value;
 				valid = false;
 			}
@@ -77,8 +76,6 @@ function coerce(arg, deep = false) {
 			if (valid && deep) {
 				walk(result);
 			}
-		} else {
-			result = value;
 		}
 	}
 
