@@ -8,8 +8,6 @@ Tiny coercion library for Client or Server. Converts string values to their appr
 
 Great for DOM data attributes, localStorage, and other cases where you need to store strings that represent typed values.
 
-**Requires Node.js >= 6**
-
 [Repository](https://github.com/avoidwork/tiny-coerce)
 
 ## Installation
