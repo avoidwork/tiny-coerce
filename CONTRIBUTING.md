@@ -108,6 +108,9 @@ Distribution files are built using [Rollup](https://rollupjs.org/).
 
 ## Code Style Guidelines
 
+See [docs/CODE_STYLE.md](docs/CODE_STYLE.md) for detailed code style guidelines.
+
+Key principles:
 - **Keep it simple**: Prefer simple, readable solutions
 - **No mutations**: Functions should not mutate their arguments
 - **Error handling**: Use try/catch for JSON parsing, throw for invalid input
