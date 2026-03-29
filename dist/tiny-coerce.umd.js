@@ -8,7 +8,7 @@
 (function(g,f){typeof exports==='object'&&typeof module!=='undefined'?f(exports):typeof define==='function'&&define.amd?define(['exports'],f):(g=typeof globalThis!=='undefined'?globalThis:g||self,f(g.lru={}));})(this,(function(exports){'use strict';const STRING = "string";
 
 const MAX_DEPTH = 100;
-const MAX_STRING_SIZE = 10000;/**
+const MAX_STRING_SIZE = 100000;/**
  * Checks if value is a boolean true
  * @private
  * @param {string} value - The trimmed string value
@@ -96,57 +96,11 @@ function walk(arg, options, coerceFn, depth = 0) {
 
 /**
  * Coerces a string value to its appropriate type
- * @private
- * @param {string} value - The trimmed string value
- * @param {boolean} deep - Whether to recursively coerce nested values
- * @param {Object} options - Coercion options
- * @param {number} depth - Current recursion depth
- * @returns {*} The coerced value
- */
-function coerceValue(value, deep, options, depth) {
-	if (isTrue(value)) {
-		return true;
-	}
-
-	if (isFalse(value)) {
-		return false;
-	}
-
-	if (isNull(value)) {
-		return null;
-	}
-
-	if (isUndefined(value)) {
-		return undefined;
-	}
-
-	const num = Number(value);
-	if (!isNaN(num)) {
-		return num;
-	}
-
-	try {
-		const parsed = JSON.parse(value);
-		if (isObjectOrArray(parsed) || isString(parsed)) {
-			if (deep) {
-				return walk(parsed, options, coerce, depth);
-			}
-			return parsed;
-		}
-	} catch {
-		// Not valid JSON, return as string
-	}
-
-	return value;
-}
-
-/**
- * Coerces a string value to its appropriate type
  * @param {*} arg - The value to coerce
  * @param {boolean} [deep=false] - Whether to recursively coerce nested values
  * @param {Object} [options={}] - Coercion options
  * @param {number} [options.maxDepth=100] - Maximum recursion depth
- * @param {number} [options.maxStringSize=10000] - Maximum string size in bytes
+ * @param {number} [options.maxStringSize=100000] - Maximum string size in bytes
  * @returns {*} The coerced value
  */
 function coerce(arg, deep = false, options = {}, depth = 0) {
@@ -167,7 +121,33 @@ function coerce(arg, deep = false, options = {}, depth = 0) {
 			);
 		}
 
-		result = value.length === 0 ? value : coerceValue(value, deep, options, depth);
+		if (value.length === 0) {
+			result = value;
+		} else if (isTrue(value)) {
+			result = true;
+		} else if (isFalse(value)) {
+			result = false;
+		} else if (isNull(value)) {
+			result = null;
+		} else if (isUndefined(value)) {
+			result = undefined;
+		} else {
+			const num = Number(value);
+			if (!isNaN(num)) {
+				result = num;
+			} else {
+				try {
+					const parsed = JSON.parse(value);
+					if (isObjectOrArray(parsed) || isString(parsed)) {
+						result = deep ? walk(parsed, options, coerce, depth) : parsed;
+					} else {
+						result = value;
+					}
+				} catch {
+					result = value;
+				}
+			}
+		}
 	}
 
 	return result;
