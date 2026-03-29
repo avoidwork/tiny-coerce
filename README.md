@@ -1,13 +1,33 @@
 # Tiny Coerce
 
+[![npm version](https://img.shields.io/npm/v/tiny-coerce.svg)](https://www.npmjs.com/package/tiny-coerce)
+[![npm downloads](https://img.shields.io/npm/dm/tiny-coerce.svg)](https://www.npmjs.com/package/tiny-coerce)
+[![Build Status](https://github.com/avoidwork/tiny-coerce/actions/workflows/node.js.yml/badge.svg)](https://github.com/avoidwork/tiny-coerce/actions)
+
 Tiny coercion library for Client or Server. Converts string values to their appropriate JavaScript types (boolean, null, undefined, number, object, array).
 
 Great for DOM data attributes, localStorage, and other cases where you need to store strings that represent typed values.
+
+**Requires Node.js >= 6**
+
+[Repository](https://github.com/avoidwork/tiny-coerce)
 
 ## Installation
 
 ```bash
 npm install tiny-coerce
+```
+
+### ES Modules
+
+```javascript
+import { coerce } from "tiny-coerce";
+```
+
+### CommonJS
+
+```javascript
+const { coerce } = require("tiny-coerce");
 ```
 
 ## Usage
@@ -52,6 +72,12 @@ Coerces a string value to its appropriate JavaScript type.
 
 **Returns:** {*} - The coerced value
 
+**Errors:**
+
+Throws an `Error` if:
+- The string exceeds `maxStringSize`
+- Recursion depth exceeds `maxDepth` during deep coercion
+
 **Coerced Types:**
 
 | Input | Output | Notes |
@@ -91,6 +117,16 @@ See [docs/TECHNICAL.md](https://github.com/avoidwork/tiny-coerce/tree/master/doc
 - Type coercion pipeline
 - Security considerations
 - Performance characteristics
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Run tests (`npm test`)
+5. Commit your changes (`git commit --no-verify -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
 ## License
 
