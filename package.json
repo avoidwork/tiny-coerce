@@ -1,7 +1,7 @@
 {
   "name": "tiny-coerce",
   "version": "3.0.2",
-  "description": "Tiny coercion library for Client or Server",
+  "description": "Convert strings to JavaScript types (boolean, null, number, object, array)",
   "type": "module",
   "types": "types/coerce.d.ts",
   "source": "src/coerce.js",
@@ -12,8 +12,9 @@
     "require": "./dist/tiny-coerce.cjs"
   },
   "files": [
-    "dist",
-    "types"
+    "dist/tiny-coerce.cjs",
+    "dist/tiny-coerce.js",
+    "types/coerce.d.ts"
   ],
   "engines": {
     "node": ">=6"
@@ -23,12 +24,11 @@
     "build": "npm run lint && rm -rf dist && npm run rollup",
     "changelog": "auto-changelog -p",
     "rollup": "rollup --config",
-    "fix": "eslint --fix *.js src/*.js test/*.js",
-    "lint": "eslint *.js src/*.js test/*.js",
-    "mocha": "nyc mocha test/*.js",
-    "types": "npx -p typescript tsc src/coerce.js --declaration --allowJs --emitDeclarationOnly --outDir types && rm types/constants.d.ts && rm types/regex.d.ts",
-    "test": "npm run lint && npm run mocha",
-    "prepare": "husky install"
+    "fix": "oxlint --fix *.js src tests && oxfmt *.js src tests/unit --write",
+    "lint": "oxlint *.js src tests && oxfmt *.js src tests/unit --check",
+    "coverage": "node --test --experimental-test-coverage --test-coverage-exclude=dist/** --test-coverage-exclude=tests/** --test-reporter=spec tests/**/*.js 2>&1 | grep -A 1000 \"start of coverage report\" > coverage.txt && ! grep -q \"failing tests\" coverage.txt",
+    "test": "node --test tests/*.js",
+    "prepare": "husky"
   },
   "repository": {
     "type": "git",
@@ -36,7 +36,11 @@
   },
   "keywords": [
     "coerce",
-    "coercion"
+    "coercion",
+    "type-conversion",
+    "string-to-type",
+    "parse",
+    "data-types"
   ],
   "author": "Jason Mulligan <jason.mulligan@avoidwork.com>",
   "license": "BSD-3-Clause",
@@ -45,14 +49,11 @@
   },
   "homepage": "http://avoidwork.github.io/tiny-coerce",
   "devDependencies": {
-    "@rollup/plugin-terser": "^0.4.3",
-    "auto-changelog": "^2.4.0",
-    "eslint": "^8.49.0",
-    "husky": "^9.0.6",
-    "mocha": "^11.0.1",
-    "nyc": "^18.0.0",
-    "rollup": "^4.0.0",
-    "typescript": "^6.0.2"
-  },
-  "dependencies": {}
+    "@rollup/plugin-terser": "^1.0.0",
+    "auto-changelog": "^2.5.0",
+    "husky": "^9.1.7",
+    "oxfmt": "^0.42.0",
+    "oxlint": "^1.57.0",
+    "rollup": "^4.60.0"
+  }
 }
