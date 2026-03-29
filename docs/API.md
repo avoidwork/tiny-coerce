@@ -1,15 +1,13 @@
 # API Reference
 
-## `coerce(arg, deep = false, options = {})`
+## `coerce(arg, options = {})`
 
 Coerces a string value to its appropriate JavaScript type.
 
 ### Parameters
 
 - `arg` {*} - The value to coerce
-- `deep` {boolean} (default: `false`) - Whether to recursively coerce nested values in arrays/objects
 - `options` {Object} (default: `{}`) - Coercion options
-  - `maxDepth` {number} (default: `100`) - Maximum recursion depth for deep coercion
   - `maxStringSize` {number} (default: `100000`) - Maximum string size in bytes
 
 ### Returns
@@ -45,12 +43,8 @@ coerce('{"a":1}');     // {a: 1}
 coerce("[1,2,3]");     // [1, 2, 3]
 coerce('"hello"');     // "hello"
 
-// Deep coercion
-coerce({a: "123"}, true);  // {a: 123}
-coerce(["1", "2"], true);  // [1, 2]
-
 // With options
-coerce("true", false, {maxStringSize: 1000});
+coerce("true", {maxStringSize: 1000});
 ```
 
 ### Errors

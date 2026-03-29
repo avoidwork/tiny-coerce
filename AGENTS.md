@@ -35,9 +35,8 @@ npm run rollup    # Build dist files only
 Tests are in `tests/` directory. Run with `npm test`.
 
 ## Options
-`coerce(arg, deep=false, options={})` accepts an options object:
-- `maxDepth` - Maximum recursion depth (default: 100)
-- `maxStringSize` - Maximum string size in bytes (default: 10000)
+`coerce(arg, options={})` accepts an options object:
+- `maxStringSize` - Maximum string size in bytes (default: 100000)
 
 ## Git Workflow
 - Use `--no-verify` to skip husky hooks when needed

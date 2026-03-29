@@ -50,22 +50,9 @@ describe("Testing flat structure", () => {
 	});
 });
 
-describe("Testing deep structure coercion", () => {
-	let object;
-
-	beforeEach(() => {
-		object = {a: {b: "50"}};
-	});
-
-	test("It should coerce", () => {
-		assert.strictEqual(coerce(JSON.stringify(object), true).a.b, 50, "Should be `50`");
-		assert.strictEqual(coerce(object, true).a.b, 50, "Should be `50`");
-	});
-});
-
 describe("Testing options", () => {
 	test("Should enforce maxStringSize", () => {
 		const longString = "a".repeat(10001);
-		assert.throws(() => coerce(longString, false, {maxStringSize: 10000}), /exceeds maximum size/);
+		assert.throws(() => coerce(longString, {maxStringSize: 10000}), /exceeds maximum size/);
 	});
 });
