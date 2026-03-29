@@ -12,8 +12,9 @@
     "require": "./dist/tiny-coerce.cjs"
   },
   "files": [
-    "dist",
-    "types"
+    "dist/tiny-coerce.cjs",
+    "dist/tiny-coerce.js",
+    "types/coerce.d.ts"
   ],
   "engines": {
     "node": ">=6"
