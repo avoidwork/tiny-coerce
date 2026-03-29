@@ -6,7 +6,6 @@
  * @version 3.0.2
  */
 const STRING = "string";
-
 const MAX_DEPTH = 100;
 const MAX_STRING_SIZE = 100000;/**
  * Checks if value is a boolean true

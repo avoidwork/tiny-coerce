@@ -8,7 +8,6 @@
 'use strict';
 
 const STRING = "string";
-
 const MAX_DEPTH = 100;
 const MAX_STRING_SIZE = 100000;
 

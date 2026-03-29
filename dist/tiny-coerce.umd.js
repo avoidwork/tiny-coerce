@@ -6,7 +6,6 @@
  * @version 3.0.2
  */
 (function(g,f){typeof exports==='object'&&typeof module!=='undefined'?f(exports):typeof define==='function'&&define.amd?define(['exports'],f):(g=typeof globalThis!=='undefined'?globalThis:g||self,f(g.lru={}));})(this,(function(exports){'use strict';const STRING = "string";
-
 const MAX_DEPTH = 100;
 const MAX_STRING_SIZE = 100000;/**
  * Checks if value is a boolean true
