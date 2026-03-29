@@ -50,9 +50,45 @@ describe("Testing flat structure", () => {
 	});
 });
 
+describe("Testing deep structure coercion", () => {
+	let object;
+
+	beforeEach(() => {
+		object = {a: {b: "50"}};
+	});
+
+	test("It should coerce JSON string", () => {
+		assert.strictEqual(coerce(JSON.stringify(object), true).a.b, 50, "Should be `50`");
+	});
+
+	test("It should coerce object", () => {
+		assert.strictEqual(coerce(object, true).a.b, 50, "Should be `50`");
+	});
+
+	test("It should coerce array", () => {
+		const arr = ["1", "2", "3"];
+		const result = coerce(arr, true);
+		assert.strictEqual(result[0], 1);
+		assert.strictEqual(result[1], 2);
+		assert.strictEqual(result[2], 3);
+	});
+
+	test("It should coerce nested array in object", () => {
+		const obj = {items: ["10", "20"]};
+		const result = coerce(obj, true);
+		assert.strictEqual(result.items[0], 10);
+		assert.strictEqual(result.items[1], 20);
+	});
+});
+
 describe("Testing options", () => {
 	test("Should enforce maxStringSize", () => {
-		const longString = "a".repeat(10001);
-		assert.throws(() => coerce(longString, {maxStringSize: 10000}), /exceeds maximum size/);
+		const longString = "a".repeat(100001);
+		assert.throws(() => coerce(longString, false, {maxStringSize: 100000}), /exceeds maximum size/);
+	});
+
+	test("Should enforce maxDepth", () => {
+		const nested = {a: {b: {c: {d: {e: "1"}}}}};
+		assert.throws(() => coerce(nested, true, {maxDepth: 3}), /exceeded/);
 	});
 });

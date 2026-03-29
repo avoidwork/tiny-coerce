@@ -16,6 +16,7 @@ npm run lint      # Check linting and formatting
 npm run fix       # Auto-fix linting and formatting issues
 npm run build     # Full build (lint + rollup)
 npm run rollup    # Build dist files only
+npm test          # Run tests
 ```
 
 ## Project Structure
@@ -24,6 +25,7 @@ npm run rollup    # Build dist files only
 - `src/constants.js` - Constants and patterns
 - `dist/` - Built files (CJS, ESM, UMD, minified)
 - `types/` - TypeScript declarations
+- `tests/` - Test files
 
 ## Code Style
 - Tabs for indentation
@@ -33,11 +35,30 @@ npm run rollup    # Build dist files only
 
 ## Testing
 Tests are in `tests/` directory. Run with `npm test`.
+- `tests/coercion_test.js` - Main coercion tests
+- `tests/helpers_test.js` - Helper function tests
 
-## Options
-`coerce(arg, options={})` accepts an options object:
-- `maxStringSize` - Maximum string size in bytes (default: 100000)
+## API
+`coerce(arg, deep = false, options = {})` accepts:
+- `arg` {*} - The value to coerce
+- `deep` {boolean} - Whether to recursively coerce nested values (default: false)
+- `options` {Object} - Coercion options
+  - `maxDepth` - Maximum recursion depth (default: 100)
+  - `maxStringSize` - Maximum string size in bytes (default: 100000)
+
+## Coercion Order
+1. Boolean true: `"true"` (case-insensitive)
+2. Boolean false: `"false"` (case-insensitive)
+3. Null: `"null"` (case-insensitive)
+4. Undefined: `"undefined"` (exact match)
+5. Number: Any numeric string
+6. JSON: Objects, arrays, or strings via JSON.parse()
+7. Fallback: Return trimmed string
 
 ## Git Workflow
 - Use `--no-verify` to skip husky hooks when needed
 - Push to `tweaks` branch for development changes
+
+## Constants
+- `MAX_DEPTH = 100` - Maximum recursion depth
+- `MAX_STRING_SIZE = 100000` - Maximum string size in bytes (100KB)
