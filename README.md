@@ -85,7 +85,7 @@ See `coverage.txt` for the latest coverage report.
 
 ## Technical Details
 
-See [docs/TECHNICAL.md](docs/TECHNICAL.md) for in-depth technical documentation covering:
+See [docs/TECHNICAL.md](https://github.com/avoidwork/tiny-coerce/tree/master/docs/TECHNICAL.md) for in-depth technical documentation covering:
 
 - Architecture and module structure
 - Type coercion pipeline
