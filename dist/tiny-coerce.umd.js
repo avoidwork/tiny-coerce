@@ -6,13 +6,13 @@
  * @version 3.0.2
  */
 (function(g,f){typeof exports==='object'&&typeof module!=='undefined'?f(exports):typeof define==='function'&&define.amd?define(['exports'],f):(g=typeof globalThis!=='undefined'?globalThis:g||self,f(g.lru={}));})(this,(function(exports){'use strict';const STRING = "string";
-const UNDEFINED = "undefined";const regex = {
-	true: /^(T|t)rue$/,
+const UNDEFINED = "undefined";
+
+const REGEX = {
 	false: /^(F|f)alse$/,
 	null: /^(N|n)ull$/,
-};
-
-/**
+	true: /^(T|t)rue$/,
+};/**
  * Walks through an array or object and coerces each value
  * @private
  * @param {Array|Object} arg - The array or object to walk
@@ -82,11 +82,11 @@ function coerce(arg, deep = false, options = {}, depth = 0) {
 
 		if (value.length === 0) {
 			result = value;
-		} else if (coerceBoolean && regex.true.test(value)) {
+		} else if (coerceBoolean && REGEX.true.test(value)) {
 			result = true;
-		} else if (coerceBoolean && regex.false.test(value)) {
+		} else if (coerceBoolean && REGEX.false.test(value)) {
 			result = false;
-		} else if (coerceNull && regex.null.test(value)) {
+		} else if (coerceNull && REGEX.null.test(value)) {
 			result = null;
 		} else if (coerceUndefined && value === UNDEFINED) {
 			result = undefined;

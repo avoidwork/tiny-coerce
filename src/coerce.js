@@ -1,10 +1,4 @@
-import { STRING, UNDEFINED } from "./constants.js";
-
-const regex = {
-	true: /^(T|t)rue$/,
-	false: /^(F|f)alse$/,
-	null: /^(N|n)ull$/,
-};
+import { REGEX, STRING, UNDEFINED } from "./constants.js";
 
 /**
  * Walks through an array or object and coerces each value
@@ -76,11 +70,11 @@ export function coerce(arg, deep = false, options = {}, depth = 0) {
 
 		if (value.length === 0) {
 			result = value;
-		} else if (coerceBoolean && regex.true.test(value)) {
+		} else if (coerceBoolean && REGEX.true.test(value)) {
 			result = true;
-		} else if (coerceBoolean && regex.false.test(value)) {
+		} else if (coerceBoolean && REGEX.false.test(value)) {
 			result = false;
-		} else if (coerceNull && regex.null.test(value)) {
+		} else if (coerceNull && REGEX.null.test(value)) {
 			result = null;
 		} else if (coerceUndefined && value === UNDEFINED) {
 			result = undefined;
