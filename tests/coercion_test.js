@@ -64,31 +64,6 @@ describe("Testing deep structure coercion", () => {
 });
 
 describe("Testing options", () => {
-	test("Should respect coerceBoolean option", () => {
-		assert.strictEqual(coerce("true", false, {coerceBoolean: false}), "true", "Should not coerce when disabled");
-		assert.strictEqual(coerce("true", false, {coerceBoolean: true}), true, "Should coerce when enabled");
-	});
-
-	test("Should respect coerceNull option", () => {
-		assert.strictEqual(coerce("null", false, {coerceNull: false}), "null", "Should not coerce when disabled");
-		assert.strictEqual(coerce("null", false, {coerceNull: true}), null, "Should coerce when enabled");
-	});
-
-	test("Should respect coerceUndefined option", () => {
-		assert.strictEqual(coerce("undefined", false, {coerceUndefined: false}), "undefined", "Should not coerce when disabled");
-		assert.strictEqual(coerce("undefined", false, {coerceUndefined: true}), undefined, "Should coerce when enabled");
-	});
-
-	test("Should respect coerceNumber option", () => {
-		assert.strictEqual(coerce("123", false, {coerceNumber: false}), "123", "Should not coerce when disabled");
-		assert.strictEqual(coerce("123", false, {coerceNumber: true}), 123, "Should coerce when enabled");
-	});
-
-	test("Should respect coerceObject option", () => {
-		assert.strictEqual(coerce('{"a":1}', false, {coerceObject: false}), '{"a":1}', "Should not coerce when disabled");
-		assert.strictEqual(coerce('{"a":1}', false, {coerceObject: true}).a, 1, "Should coerce when enabled");
-	});
-
 	test("Should enforce maxStringSize", () => {
 		const longString = "a".repeat(10001);
 		assert.throws(() => coerce(longString, false, {maxStringSize: 10000}), /exceeds maximum size/);

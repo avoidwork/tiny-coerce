@@ -38,11 +38,6 @@ Tests are in `tests/` directory. Run with `npm test`.
 `coerce(arg, deep=false, options={})` accepts an options object:
 - `maxDepth` - Maximum recursion depth (default: 100)
 - `maxStringSize` - Maximum string size in bytes (default: 10000)
-- `coerceBoolean` - Enable/disable boolean coercion (default: true)
-- `coerceNull` - Enable/disable null coercion (default: true)
-- `coerceUndefined` - Enable/disable undefined coercion (default: true)
-- `coerceNumber` - Enable/disable number coercion (default: true)
-- `coerceObject` - Enable/disable JSON object/array coercion (default: true)
 
 ## Git Workflow
 - Use `--no-verify` to skip husky hooks when needed
