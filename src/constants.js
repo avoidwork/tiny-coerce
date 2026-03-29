@@ -8,4 +8,4 @@ export const REGEX = {
 };
 
 export const MAX_DEPTH = 100;
-export const MAX_STRING_SIZE = 10000;
+export const MAX_STRING_SIZE = 100000;
