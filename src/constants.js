@@ -6,3 +6,6 @@ export const REGEX = {
 	null: /^(N|n)ull$/,
 	true: /^(T|t)rue$/,
 };
+
+export const MAX_DEPTH = 100;
+export const MAX_STRING_SIZE = 10000;

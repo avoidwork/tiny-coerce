@@ -6,22 +6,77 @@
  * @version 3.0.2
  */
 (function(g,f){typeof exports==='object'&&typeof module!=='undefined'?f(exports):typeof define==='function'&&define.amd?define(['exports'],f):(g=typeof globalThis!=='undefined'?globalThis:g||self,f(g.lru={}));})(this,(function(exports){'use strict';const STRING = "string";
-const UNDEFINED = "undefined";
 
-const REGEX = {
-	false: /^(F|f)alse$/,
-	null: /^(N|n)ull$/,
-	true: /^(T|t)rue$/,
-};/**
+const MAX_DEPTH = 100;
+const MAX_STRING_SIZE = 10000;/**
+ * Checks if value is a boolean true
+ * @private
+ * @param {string} value - The trimmed string value
+ * @returns {boolean}
+ */
+function isTrue(value) {
+	return value.toLowerCase() === "true";
+}
+
+/**
+ * Checks if value is a boolean false
+ * @private
+ * @param {string} value - The trimmed string value
+ * @returns {boolean}
+ */
+function isFalse(value) {
+	return value.toLowerCase() === "false";
+}
+
+/**
+ * Checks if value is null
+ * @private
+ * @param {string} value - The trimmed string value
+ * @returns {boolean}
+ */
+function isNull(value) {
+	return value.toLowerCase() === "null";
+}
+
+/**
+ * Checks if value is undefined
+ * @private
+ * @param {string} value - The trimmed string value
+ * @returns {boolean}
+ */
+function isUndefined(value) {
+	return value === "undefined";
+}
+
+/**
+ * Checks if parsed JSON is an object or array (not a primitive)
+ * @private
+ * @param {*} value - The parsed value
+ * @returns {boolean}
+ */
+function isObjectOrArray(value) {
+	return typeof value === "object" && value !== null;
+}
+
+/**
+ * Checks if parsed JSON is a string
+ * @private
+ * @param {*} value - The parsed value
+ * @returns {boolean}
+ */
+function isString(value) {
+	return typeof value === "string";
+}/**
  * Walks through an array or object and coerces each value
  * @private
  * @param {Array|Object} arg - The array or object to walk
  * @param {Object} options - Coercion options
+ * @param {Function} coerceFn - The coerce function to use
  * @param {number} [depth=0] - Current recursion depth
  * @returns {Array|Object} New structure with coerced values
  */
-function walk(arg, options, depth = 0) {
-	const { maxDepth = 100 } = options;
+function walk(arg, options, coerceFn, depth = 0) {
+	const { maxDepth = MAX_DEPTH } = options;
 
 	if (depth > maxDepth) {
 		throw new Error(`Maximum recursion depth of ${maxDepth} exceeded`);
@@ -31,12 +86,11 @@ function walk(arg, options, depth = 0) {
 	const x = array ? arg : Object.keys(arg);
 	const result = array ? [] : {};
 
-	const fn = (i, idx) => {
-		const key = array ? idx : i;
-		result[key] = coerce(array ? i : arg[i], true, options, depth + 1);
-	};
+	for (let i = 0; i < x.length; i++) {
+		const key = array ? i : x[i];
+		result[key] = coerceFn(arg[key], true, options, depth + 1);
+	}
 
-	x.forEach(fn);
 	return result;
 }
 
@@ -56,7 +110,7 @@ function walk(arg, options, depth = 0) {
  */
 function coerce(arg, deep = false, options = {}, depth = 0) {
 	const {
-		maxStringSize = 10000,
+		maxStringSize = MAX_STRING_SIZE,
 		coerceBoolean = true,
 		coerceNull = true,
 		coerceUndefined = true,
@@ -70,44 +124,113 @@ function coerce(arg, deep = false, options = {}, depth = 0) {
 		result = arg;
 
 		if (deep) {
-			result = walk(result, options, depth);
+			result = walk(result, options, coerce, depth);
 		}
 	} else {
-		if (arg.length > maxStringSize) {
+		const value = arg.trim();
+
+		if (value.length > maxStringSize) {
 			throw new Error(`String exceeds maximum size of ${maxStringSize} bytes`);
 		}
 
-		const value = arg.trim();
-		let tmp;
-
 		if (value.length === 0) {
 			result = value;
-		} else if (coerceBoolean && REGEX.true.test(value)) {
-			result = true;
-		} else if (coerceBoolean && REGEX.false.test(value)) {
-			result = false;
-		} else if (coerceNull && REGEX.null.test(value)) {
-			result = null;
-		} else if (coerceUndefined && value === UNDEFINED) {
-			result = undefined;
-		} else if (coerceNumber && !isNaN((tmp = Number(value)))) {
-			result = tmp;
-		} else if (coerceObject) {
-			let valid;
-
-			try {
-				result = JSON.parse(value);
-				valid = true;
-			} catch {
-				result = value;
-				valid = false;
-			}
-
-			if (valid && deep) {
-				result = walk(result, options, depth);
-			}
 		} else {
-			result = value;
+			const lower = value.toLowerCase();
+
+			if (coerceBoolean) {
+				if (isTrue(lower)) {
+					result = true;
+				} else if (isFalse(lower)) {
+					result = false;
+				} else if (coerceNull && isNull(lower)) {
+					result = null;
+				} else if (coerceUndefined && isUndefined(value)) {
+					result = undefined;
+				} else if (coerceNumber) {
+					const num = Number(value);
+					if (!isNaN(num)) {
+						result = num;
+					} else if (coerceObject) {
+						try {
+							const parsed = JSON.parse(value);
+							if (isObjectOrArray(parsed) || isString(parsed)) {
+								result = parsed;
+							} else {
+								result = value;
+							}
+						} catch {
+							result = value;
+						}
+
+						if (result !== value && deep) {
+							result = walk(result, options, coerce, depth);
+						}
+					} else {
+						result = value;
+					}
+				} else if (coerceObject) {
+					try {
+						const parsed = JSON.parse(value);
+						if (isObjectOrArray(parsed) || isString(parsed)) {
+							result = parsed;
+						} else {
+							result = value;
+						}
+					} catch {
+						result = value;
+					}
+
+					if (result !== value && deep) {
+						result = walk(result, options, coerce, depth);
+					}
+				} else {
+					result = value;
+				}
+			} else if (coerceNull && isNull(lower)) {
+				result = null;
+			} else if (coerceUndefined && isUndefined(value)) {
+				result = undefined;
+			} else if (coerceNumber) {
+				const num = Number(value);
+				if (!isNaN(num)) {
+					result = num;
+				} else if (coerceObject) {
+					try {
+						const parsed = JSON.parse(value);
+						if (isObjectOrArray(parsed) || isString(parsed)) {
+							result = parsed;
+						} else {
+							result = value;
+						}
+					} catch {
+						result = value;
+					}
+
+					if (result !== value && deep) {
+						result = walk(result, options, coerce, depth);
+					}
+				} else {
+					result = value;
+				}
+			} else if (coerceObject) {
+				try {
+					const parsed = JSON.parse(value);
+					if (isObjectOrArray(parsed) || isString(parsed)) {
+						result = parsed;
+					} else {
+						result = value;
+					}
+				} catch {
+					result = value;
+				}
+
+				if (result !== value && deep) {
+					result = walk(result, options, coerce, depth);
+				}
+			} else {
+				result = value;
+			}
 		}
 	}
 

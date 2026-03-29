@@ -19,8 +19,9 @@ npm run rollup    # Build dist files only
 ```
 
 ## Project Structure
-- `src/coerce.js` - Main coercion logic
-- `src/constants.js` - Constants and regex patterns
+- `src/coerce.js` - Main coercion logic (exports `coerce` function)
+- `src/helpers.js` - Helper functions (internal use)
+- `src/constants.js` - Constants and patterns
 - `dist/` - Built files (CJS, ESM, UMD, minified)
 - `types/` - TypeScript declarations
 
@@ -31,7 +32,17 @@ npm run rollup    # Build dist files only
 - JSDoc comments for exported functions
 
 ## Testing
-Tests are in `test/` directory. Run with `npm test`.
+Tests are in `tests/` directory. Run with `npm test`.
+
+## Options
+`coerce(arg, deep=false, options={})` accepts an options object:
+- `maxDepth` - Maximum recursion depth (default: 100)
+- `maxStringSize` - Maximum string size in bytes (default: 10000)
+- `coerceBoolean` - Enable/disable boolean coercion (default: true)
+- `coerceNull` - Enable/disable null coercion (default: true)
+- `coerceUndefined` - Enable/disable undefined coercion (default: true)
+- `coerceNumber` - Enable/disable number coercion (default: true)
+- `coerceObject` - Enable/disable JSON object/array coercion (default: true)
 
 ## Git Workflow
 - Use `--no-verify` to skip husky hooks when needed

@@ -1,15 +1,17 @@
-import { REGEX, STRING, UNDEFINED } from "./constants.js";
+import { MAX_DEPTH, MAX_STRING_SIZE, STRING } from "./constants.js";
+import { isFalse, isNull, isObjectOrArray, isString, isTrue, isUndefined } from "./helpers.js";
 
 /**
  * Walks through an array or object and coerces each value
  * @private
  * @param {Array|Object} arg - The array or object to walk
  * @param {Object} options - Coercion options
+ * @param {Function} coerceFn - The coerce function to use
  * @param {number} [depth=0] - Current recursion depth
  * @returns {Array|Object} New structure with coerced values
  */
-function walk(arg, options, depth = 0) {
-	const { maxDepth = 100 } = options;
+function walk(arg, options, coerceFn, depth = 0) {
+	const { maxDepth = MAX_DEPTH } = options;
 
 	if (depth > maxDepth) {
 		throw new Error(`Maximum recursion depth of ${maxDepth} exceeded`);
@@ -19,12 +21,11 @@ function walk(arg, options, depth = 0) {
 	const x = array ? arg : Object.keys(arg);
 	const result = array ? [] : {};
 
-	const fn = (i, idx) => {
-		const key = array ? idx : i;
-		result[key] = coerce(array ? i : arg[i], true, options, depth + 1);
-	};
+	for (let i = 0; i < x.length; i++) {
+		const key = array ? i : x[i];
+		result[key] = coerceFn(arg[key], true, options, depth + 1);
+	}
 
-	x.forEach(fn);
 	return result;
 }
 
@@ -44,7 +45,7 @@ function walk(arg, options, depth = 0) {
  */
 export function coerce(arg, deep = false, options = {}, depth = 0) {
 	const {
-		maxStringSize = 10000,
+		maxStringSize = MAX_STRING_SIZE,
 		coerceBoolean = true,
 		coerceNull = true,
 		coerceUndefined = true,
@@ -58,44 +59,113 @@ export function coerce(arg, deep = false, options = {}, depth = 0) {
 		result = arg;
 
 		if (deep) {
-			result = walk(result, options, depth);
+			result = walk(result, options, coerce, depth);
 		}
 	} else {
-		if (arg.length > maxStringSize) {
+		const value = arg.trim();
+
+		if (value.length > maxStringSize) {
 			throw new Error(`String exceeds maximum size of ${maxStringSize} bytes`);
 		}
 
-		const value = arg.trim();
-		let tmp;
-
 		if (value.length === 0) {
 			result = value;
-		} else if (coerceBoolean && REGEX.true.test(value)) {
-			result = true;
-		} else if (coerceBoolean && REGEX.false.test(value)) {
-			result = false;
-		} else if (coerceNull && REGEX.null.test(value)) {
-			result = null;
-		} else if (coerceUndefined && value === UNDEFINED) {
-			result = undefined;
-		} else if (coerceNumber && !isNaN((tmp = Number(value)))) {
-			result = tmp;
-		} else if (coerceObject) {
-			let valid;
-
-			try {
-				result = JSON.parse(value);
-				valid = true;
-			} catch {
-				result = value;
-				valid = false;
-			}
-
-			if (valid && deep) {
-				result = walk(result, options, depth);
-			}
 		} else {
-			result = value;
+			const lower = value.toLowerCase();
+
+			if (coerceBoolean) {
+				if (isTrue(lower)) {
+					result = true;
+				} else if (isFalse(lower)) {
+					result = false;
+				} else if (coerceNull && isNull(lower)) {
+					result = null;
+				} else if (coerceUndefined && isUndefined(value)) {
+					result = undefined;
+				} else if (coerceNumber) {
+					const num = Number(value);
+					if (!isNaN(num)) {
+						result = num;
+					} else if (coerceObject) {
+						try {
+							const parsed = JSON.parse(value);
+							if (isObjectOrArray(parsed) || isString(parsed)) {
+								result = parsed;
+							} else {
+								result = value;
+							}
+						} catch {
+							result = value;
+						}
+
+						if (result !== value && deep) {
+							result = walk(result, options, coerce, depth);
+						}
+					} else {
+						result = value;
+					}
+				} else if (coerceObject) {
+					try {
+						const parsed = JSON.parse(value);
+						if (isObjectOrArray(parsed) || isString(parsed)) {
+							result = parsed;
+						} else {
+							result = value;
+						}
+					} catch {
+						result = value;
+					}
+
+					if (result !== value && deep) {
+						result = walk(result, options, coerce, depth);
+					}
+				} else {
+					result = value;
+				}
+			} else if (coerceNull && isNull(lower)) {
+				result = null;
+			} else if (coerceUndefined && isUndefined(value)) {
+				result = undefined;
+			} else if (coerceNumber) {
+				const num = Number(value);
+				if (!isNaN(num)) {
+					result = num;
+				} else if (coerceObject) {
+					try {
+						const parsed = JSON.parse(value);
+						if (isObjectOrArray(parsed) || isString(parsed)) {
+							result = parsed;
+						} else {
+							result = value;
+						}
+					} catch {
+						result = value;
+					}
+
+					if (result !== value && deep) {
+						result = walk(result, options, coerce, depth);
+					}
+				} else {
+					result = value;
+				}
+			} else if (coerceObject) {
+				try {
+					const parsed = JSON.parse(value);
+					if (isObjectOrArray(parsed) || isString(parsed)) {
+						result = parsed;
+					} else {
+						result = value;
+					}
+				} catch {
+					result = value;
+				}
+
+				if (result !== value && deep) {
+					result = walk(result, options, coerce, depth);
+				}
+			} else {
+				result = value;
+			}
 		}
 	}
 
