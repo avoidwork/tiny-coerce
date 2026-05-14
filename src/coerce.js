@@ -1,5 +1,13 @@
 import { MAX_DEPTH, MAX_STRING_SIZE, STRING } from "./constants.js";
-import { isFalse, isNull, isObjectOrArray, isString, isTrue, isUndefined } from "./helpers.js";
+import {
+	isBigInt,
+	isFalse,
+	isNull,
+	isObjectOrArray,
+	isString,
+	isTrue,
+	isUndefined,
+} from "./helpers.js";
 
 /**
  * Walks through an array or object and coerces each value
@@ -75,6 +83,14 @@ export function coerce(arg, deep = false, options = {}, depth = 0) {
 		return undefined;
 	}
 
+	if (isBigInt(value)) {
+		try {
+			return BigInt(value.slice(0, -1));
+		} catch {
+			// Fall through to regular number coercion
+		}
+	}
+
 	const num = Number(value);
 	if (!isNaN(num)) {
 		return num;
@@ -94,6 +110,4 @@ export function coerce(arg, deep = false, options = {}, depth = 0) {
 		}
 		throw e;
 	}
-
-	return value;
 }

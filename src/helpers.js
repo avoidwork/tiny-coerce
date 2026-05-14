@@ -57,3 +57,13 @@ export function isObjectOrArray(value) {
 export function isString(value) {
 	return typeof value === "string";
 }
+
+/**
+ * Checks if string looks like a BigInt literal (e.g., "123n")
+ * @private
+ * @param {string} value - The trimmed string value
+ * @returns {boolean}
+ */
+export function isBigInt(value) {
+	return typeof value === "string" && value[value.length - 1] === "n" && value.length > 1;
+}
