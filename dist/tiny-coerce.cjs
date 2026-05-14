@@ -79,7 +79,7 @@ function isString(value) {
  * @param {number} depth - Current recursion depth
  * @returns {Array|Object} New structure with coerced values
  */
-function walk(arg, options, depth) {
+function _walk(arg, options, depth) {
 	const { maxDepth = MAX_DEPTH } = options;
 
 	if (depth > maxDepth) {
@@ -107,13 +107,14 @@ function walk(arg, options, depth) {
  * @param {number} [options.maxStringSize=100000] - Maximum string size in bytes
  * @param {number} [depth=0] - Current recursion depth (internal use)
  * @returns {*} The coerced value
+ * @throws {Error} If max depth is exceeded or string exceeds max size
  */
 function coerce(arg, deep = false, options = {}, depth = 0) {
 	const { maxStringSize = MAX_STRING_SIZE } = options;
 
 	if (typeof arg !== STRING) {
 		if (deep) {
-			return walk(arg, options, depth);
+			return _walk(arg, options, depth);
 		}
 		return arg;
 	}
@@ -153,12 +154,15 @@ function coerce(arg, deep = false, options = {}, depth = 0) {
 		const parsed = JSON.parse(value);
 		if (isObjectOrArray(parsed) || isString(parsed)) {
 			if (deep) {
-				return walk(parsed, options, depth);
+				return _walk(parsed, options, depth);
 			}
 			return parsed;
 		}
-	} catch {
-		// Not valid JSON
+	} catch (e) {
+		if (e instanceof SyntaxError) {
+			return value;
+		}
+		throw e;
 	}
 
 	return value;
