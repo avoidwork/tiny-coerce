@@ -1,6 +1,6 @@
 import {default as assert} from "node:assert";
 import {test, describe, beforeEach} from "node:test";
-import {coerce} from "../dist/tiny-coerce.cjs";
+import {coerce} from "../src/coerce.js";
 
 describe("Testing flat structure", () => {
 	let number, boolean, booleanFalse, json, jsonString, jsonStringInvalid, undef, nullVal, empty, quoteNewLines, quoteNumbers;
@@ -78,6 +78,76 @@ describe("Testing deep structure coercion", () => {
 		const result = coerce(obj, true);
 		assert.strictEqual(result.items[0], 10);
 		assert.strictEqual(result.items[1], 20);
+	});
+});
+
+describe("Testing BigInt coercion", () => {
+	test("should coerce '123n' to BigInt(123)", () => {
+		assert.strictEqual(coerce("123n"), BigInt(123));
+	});
+
+	test("should coerce '-456n' to BigInt(-456)", () => {
+		assert.strictEqual(coerce("-456n"), BigInt(-456));
+	});
+
+	test("should coerce '0n' to BigInt(0)", () => {
+		assert.strictEqual(coerce("0n"), BigInt(0));
+	});
+
+	test("should coerce '9007199254740991n' to BigInt", () => {
+		assert.strictEqual(coerce("9007199254740991n"), BigInt(9007199254740991));
+	});
+
+	test("should coerce BigInt in deep mode", () => {
+		const obj = { big: "12345n" };
+		assert.strictEqual(coerce(obj, true).big, BigInt(12345));
+	});
+
+	test("should coerce BigInt in array in deep mode", () => {
+		const arr = ["1n", "2n", "3n"];
+		const result = coerce(arr, true);
+		assert.strictEqual(result[0], BigInt(1));
+		assert.strictEqual(result[1], BigInt(2));
+		assert.strictEqual(result[2], BigInt(3));
+	});
+
+	test("should fall through to number coercion for invalid BigInt string", () => {
+		assert.strictEqual(coerce("123nn"), "123nn");
+	});
+
+	test("should fall through for 'nn' which is BigInt-matching but invalid", () => {
+		assert.strictEqual(coerce("nn"), "nn");
+	});
+
+	test("should re-throw non-SyntaxError from JSON.parse", () => {
+		const originalJSONParse = globalThis.JSON.parse;
+		globalThis.JSON.parse = () => {
+			throw new TypeError("not a syntax error");
+		};
+		try {
+			assert.throws(() => coerce("not json"), (err) => err instanceof TypeError);
+		} finally {
+			globalThis.JSON.parse = originalJSONParse;
+		}
+	});
+});
+
+describe("Testing non-string fallback", () => {
+	test("should return non-string as-is when deep is false", () => {
+		assert.strictEqual(coerce(123), 123);
+		assert.strictEqual(coerce(true), true);
+		assert.strictEqual(coerce(false), false);
+		assert.strictEqual(coerce(null), null);
+		assert.strictEqual(coerce(undefined), undefined);
+		const obj = {x: 1};
+		assert.strictEqual(coerce(obj), obj);
+		const arr = [1, 2];
+		assert.strictEqual(coerce(arr), arr);
+	});
+
+	test("should return string as-is for fallback case", () => {
+		assert.strictEqual(coerce("hello"), "hello");
+		assert.strictEqual(coerce("world!!!"), "world!!!");
 	});
 });
 

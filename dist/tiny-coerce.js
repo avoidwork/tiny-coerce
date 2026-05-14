@@ -65,6 +65,16 @@ function isObjectOrArray(value) {
  */
 function isString(value) {
 	return typeof value === "string";
+}
+
+/**
+ * Checks if string looks like a BigInt literal (e.g., "123n")
+ * @private
+ * @param {string} value - The trimmed string value
+ * @returns {boolean}
+ */
+function isBigInt(value) {
+	return typeof value === "string" && value[value.length - 1] === "n" && value.length > 1;
 }/**
  * Walks through an array or object and coerces each value
  * @private
@@ -139,6 +149,14 @@ function coerce(arg, deep = false, options = {}, depth = 0) {
 		return undefined;
 	}
 
+	if (isBigInt(value)) {
+		try {
+			return BigInt(value.slice(0, -1));
+		} catch {
+			// Fall through to regular number coercion
+		}
+	}
+
 	const num = Number(value);
 	if (!isNaN(num)) {
 		return num;
@@ -158,6 +176,4 @@ function coerce(arg, deep = false, options = {}, depth = 0) {
 		}
 		throw e;
 	}
-
-	return value;
 }export{coerce};

@@ -1,6 +1,6 @@
 import {default as assert} from "node:assert";
 import {test, describe} from "node:test";
-import {isFalse, isNull, isObjectOrArray, isString, isTrue, isUndefined} from "../src/helpers.js";
+import {isBigInt, isFalse, isNull, isObjectOrArray, isString, isTrue, isUndefined} from "../src/helpers.js";
 
 describe("isTrue", () => {
 	test("should return true for 'true'", () => {
@@ -111,5 +111,31 @@ describe("isString", () => {
 		assert.strictEqual(isString(null), false);
 		assert.strictEqual(isString({}), false);
 		assert.strictEqual(isString([]), false);
+	});
+});
+
+describe("isBigInt", () => {
+	test("should return true for '123n'", () => {
+		assert.strictEqual(isBigInt("123n"), true);
+	});
+
+	test("should return true for '-456n'", () => {
+		assert.strictEqual(isBigInt("-456n"), true);
+	});
+
+	test("should return true for '0n'", () => {
+		assert.strictEqual(isBigInt("0n"), true);
+	});
+
+	test("should return false for 'n'", () => {
+		assert.strictEqual(isBigInt("n"), false);
+	});
+
+	test("should return false for '123'", () => {
+		assert.strictEqual(isBigInt("123"), false);
+	});
+
+	test("should return false for 'true'", () => {
+		assert.strictEqual(isBigInt("true"), false);
 	});
 });
